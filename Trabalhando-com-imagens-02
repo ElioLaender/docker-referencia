@@ -1,0 +1,116 @@
+Imagem docker:
+
+- É composto de uma série de instruções que informa como o container deve se comportar. 
+
+* Quando executamos um docker run nome_imagem - O docker verifica se a imagem existe localmente, caso não existir, ele fará uma busca no docker hub(repositório de imagens do docker), irá baixar e executar essa imagem, caso exista no repositório. 
+-----------------------------------------------------------------------------
+Comandos básicos:
+
+docker ps (Exibe apenas os containers ativos)
+docker ps -a (Exibe todos os containers já criados, inclusive os que estão parados.) 
+Nesse comando é exibido:
+- Container ID: Id do container
+- Image: Nome da imagem
+- Command: Comando utilizado quando o container foi startado
+- Created: Tempo corrente desde quando o container foi criado
+- Status: Status do container em tempo, ex: tempo em que está parado e tempo que está em execução
+- Ports: Exibe a porta do SO vinculada a porta do container
+- Names: Nome que o docker dá para o container
+
+
+Atenção: Caso seja executado o docker run, passando o nome de uma imagem, será criado um novo container com essa imagem. Para executar novamente um container já criado, é necessário o docker start passando o id do container por exemplo. 
+
+* Criar container e vincular o terminal corrente ao terminal o container:
+
+Ex: docker run -it ubuntu (o -it, é responsável por criar uma iteratividade do terminal corrente com o container criado)
+
+
+* Startando um container parado:
+- Verificar qual o id do container com docker ps -a (copiar o id)
+- Rodar: docker start id_container
+
+* Startar um container parado vinculando o terminal atual ao terminal do container:
+- docker start -a -i id_container (-a de attachment o -i de interativit)
+
+* Parar o container
+- docker stop id_container
+-----------------------------------------------------------------------------
+* Principais estados de um container:
+
+- Running (Em execução normal)
+- Stopped (Parado por algum motivo)
+-----------------------------------------------------------------------------
+* Remoção de containers:
+
+- docker rm id_container
+- docker container prune (remove todos os containers parados)
+-----------------------------------------------------------------------------
+* Exibir imagens baixadas
+- docker images (exibe todas as imagens baixadas)
+
+* Remover uma imagem:
+- docker rmi nome_imagem (O nome da imagem é encontrada na coluna REPOSITORY do comando docker images)
+-----------------------------------------------------------------------------
+* Layered File System (Sistema de camadas do docker)
+
+- Uma imagem geralmente é composta por mais de uma camada, sendo que essas camadas podem ser reaproveitadas em outras imagens. Um caso de exemplo:
+
+Supondo que baixamos uma imagem do ubuntu e depois baixamos uma imagem do CentOS. Ao baixar a imagem do CentOS, o docker irá verificar se já existe alguma camada baixada que o CentOS usa 
+e só irá trazer do repositório o que não tiver previamente baixado. No nosso exemplo, as camadas em comum entre o ubuntu e centOs serão reaproveitadas.
+
+Algumas vantagens:
+- Possibilidade de poupar banda de transferência. 
+
+
+
+* As camadas das imagens são readyOnly, sendo assim, quando criamos um container, é criado uma nova camada acima da imagem principal, e nessa camada é possível ler/escrever na camadas utilizadas. Ou seja, um container é uma camada utilizada a partir da imagem base, sendo as camadas base "replicadas" de forma a ser possível ler/escrever nessa camada. 
+
+Sendo assim, uma mesma imagem base(readOnly) serve de base para vários containers(read/write), economizando recursos. 
+
+** Sobre o Layered File System
+- Toda imagem que baixamos é composta de uma ou mais camadas.
+- Essas camadas podem ser reaproveitadas em outras imagens, acelerando assim o tempo de download.
+-----------------------------------------------------------------------------
+* Imagens oficiais e não oficiais:
+
+- Com imgens oficiais, não é necessário especificar o nome do criador da imagem, como no caso do Ubuntu e CentOS é já é fornecida oficialmente pelo Docker. Já com imagens fornecidas pela comunidade, 
+a chamada é um pouco diferente, ex:
+
+docker run dockersamples/static-site ('dockersamples' se refere ao criador da imagem). PS: Ao criar o container dessa forma, o servidor irá bloquear o terminal, para tanto, podemos sair do terminal, parar o container e rodar o mesmo novamente utilizando a tag -d de detached, exemplo.
+
+- docker run -s dockersamples/static-site (Dessa forma o container será criado liberando o terminal)
+-----------------------------------------------------------------------------
+* Docker stop:
+
+- Por padrão, ao executar o docker stop, existe um prazo de espera de 10 segundos. Para evitar ter que esperar por este prazo, é possível rodar o comando com a seguint flag:
+
+docker stop -t 0 id_contaier (-t é do time e o prazo é 0 intantâneo)
+-----------------------------------------------------------------------------
+* Linkando portas do container com as da máquina que está rodando o Docker:
+
+- docker run -d -P dockersamples/static-site (a flag -P sinalizar para o docker alocar uma porta disponível da máquina com a do docker, ou seja, determinada porta da máquina passa a apontar para a porta do container em execução)
+
+* Mapeando uma porta da máquina ao container manualmente:
+- sudo docker run -d -p 3000:80 --name meu-site dockersamples/static-site (Neste caso, a flag -p é minúscula e a porta da máquina é especificada primeiro e logo após os ':' a do container, ex: 3000:80, onde a porta 3000 da máquina aponta para a 80 do container)
+
+* Verificar qual porta determinado container está utilizando:
+- docker port id_container (retorna como está o apontamento da porta 80 http e 443 https)
+
+
+* Criar um container atribuindo um nome para o mesmo:
+
+- sudo docker run -d -P --name meu-site dockersamples/static-site
+-----------------------------------------------------------------------------
+* Setando variáveis de ambiente em um container:
+
+- sudo docker run -d -P -e AUTHOR="Elio J" --name meu-site2 dockersamples/static-site (Para setar variável de ambiente no container, é necessário passar a flag -e com o nome da variável e seu respectivo valor)
+-----------------------------------------------------------------------------
+* Listar apenas os ids dos containers:
+
+- sudo docker ps -q
+
+* Parar todos a partir do id
+sudo docker stop -t 0 $(docker ps -q)
+-----------------------------------------------------------------------------
+
+

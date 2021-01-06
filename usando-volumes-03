@@ -1,0 +1,31 @@
+* Containers são voláteis, ou seja, é comum destruir e subir containers a todo momento. Porém, os dados devem ser armazenados e continuarem em uso. Para tratar esse tipo de situação, existe o conceito de volumes. 
+
+* Volumes:
+
+- Volumes são locais de armazenamento no docker host(gerenciador do docker), onde podemos linkas nosso container a tais volumes. Criar um volume é criar uma pasta dentro de um container, e toda alteração realizada nesta pasta do container, na verdade estará sendo realizada no docker host. 
+
+-----------------------------------------------------------------------------
+* Criando um container com volume:
+
+- docker run -v "/var/www" ubuntu (a flag -v informa a pasta do container que terá seus dados salvos no docker host)
+
+* Inspecionando informações sobre o container
+- docker inspect id_container (este arquivo retorna um objeto json com várias informações sobre o container, nesse caso, no "mount", veremos em qual pasta da nossa máquina o container irá salvar os dados do diretórios especificado na flag -v)
+
+* Criando um container, especificando onde o volume será salvo na máquina que está rodando os containers
+- docker run -it -v "/home/laender/Documents/docker-volumes:/var/www" ubuntu (na flag -v, especificar a pasta da máquina e após o : especificar a pasta do container)
+
+
+** Dúvida: Quando especificarmos uma pasta específica para que os dados sejam salvos, também é considerado volume?
+
+** Docker Host é a máquina que roda o docker
+-----------------------------------------------------------------------------
+* Executando código em um container:
+
+- Quando criamos um volume, tudo o que o container alterar é refletido no volume e tudo que é alterado no volume também é refletido no container, dessa forma, conseguimos fazer com que um container
+possa executar código fonte, por exemplo. 
+
+- docker run -d -p 8080:3000 -v "/home/laender/Documents/docker-volumes:/var/www" -w "/var/www" node npm start (o npm start serve para ser executado assim que o container levantar, caso seja necessário rodar mais de um comando, o container deve ser criado no modo iterativo com a flag -it, onde o terminal será vinculado ao container logo após a criação. A flag -w "diretorio", informa em qual pasta o container deve iniciar, pois assim o comando npm start será executado a partir desta pasta)
+-----------------------------------------------------------------------------
+
+

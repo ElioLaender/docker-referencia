@@ -1,0 +1,36 @@
+Virtualização:
+
+- Normalmente, servidores que rodam com capacidade de processamenteo ociosa, pois o hardware tende a ser superior do que o demandado para o software em uso comum. Isso ocorre para que em momentos de pico, o servidor não fique lento ou pare por falta de recursos. 
+
+-----------------------------------------------------------------------------
+* Desvantagens de máquinas virtuais:
+
+- Vários servidores FÍSICOS separados para cada serviço, ex: api, banco de dados, etc. Gera um maior custo de manutenção e gastos com infra e geralmente existe a questão de hardware ocioso. 
+- A solução para evitar a ociocidade de hardware e consequentemente os custos, foi a virtualização, porém ainda sim é necessário realizar manutenção em todas as VMs.
+
+* Alguns problemas inerentes ao uso de VMs:
+
+- Os sistemas operacionais virtualizados consomem os requisitos básicos de hardware multiplicados pela quantidade de máquinas virtualizadas.
+- Manutenções tais como instalação e atualização de softwares, devem ser feitos em todas as máquinas virtualizadas, pois cada uma possui seu SO a parte.
+- Realizar manutenção em VM por VM consome tempo que poderia ser evitado com outra abordagem (uso de containers)
+-----------------------------------------------------------------------------
+* Containers:
+
+- Containers são uma abordagem, onde é possível rodar uma aplicação com o hardware virtualizado, sem necessidade de criar uma máquina virtual completa, pois através de container é possível 
+aproveitar toda a base do sistema operacional da máquina. 
+
+- Algumas vantagens do uso de containers:
+	- Melhor controle de uso do sistema operacional, pois não é necessário o uso de hardware para virtualizar um novo SO e também não é necessário manter a manutenção em vários SOs
+	- Velocidade ao criar e remover aplicações. Pelo fato do container não ter um SO específico, é possível criar e remover um container com determinada aplicação sem a demora de ter uma
+	inicialização ou reboot no sistema operacional virtualizado. 
+	- Facilidade ao trabalhar com diferentes versões de bibliotecas e linguagens, pois é possível separar essas configurações em diferentes containers. 
+-----------------------------------------------------------------------------
+* O que é o Docker? 
+
+- Docker é o sistema inicialmente criado para a criação de containers, atualmente existem outras alternativas tal como o Podman, Lxc, entre outros. 
+- Algumas tecnologias em volta do docker:
+	- Docker Engine - Responsável por fazer a integração entre os containers e o SO
+	- Docker Hub - Possui um repositório com diversas aplicações para facilitar a construção da infra estrutura
+	- Docker Swarm - Permite o uso de múltiplos dockers hosts
+-----------------------------------------------------------------------------
+
