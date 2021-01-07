@@ -1,11 +1,32 @@
+* Networking no Docker:
+
+- Todos os containers rodando dentro de um mesmo DockerHost, por padrão são configurados com Ips para serem considerados dentro da mesma rede. Sendo que o docker se encarrega de criar a rede e adiciona os containers com os respectivos Ips para fazerem parte desta rede. 
+
+Exemplo de uso:
+
+- docker run -it ubuntu (criando um container do ubuntu em modo interativo, "com terminal aberto")
+- Abrir um novo terminal
+- docker inspect id_container (Exibe as configurações do container, em NetworkSettings podemos ver as configurações de rede do container. A rede padrão do docker é a bridge)
+- docker run -it ubuntu (cria outro container do ubuntu)
+- apt-get update && apt-get install iputils-ping (instalar a ferramenta para rodar o ping)
+- a partir da segunda máquina, já conseguimos pingar a primeira, de forma a vermos que é possível uma comunicação em rede. 
 -----------------------------------------------------------------------------
+* Criando rede própria no Docker:
+
+- Com as rede default criada pelo dockerhost, não é possível setar um hostname, neste caso precisamos nos referenciar aos outros containers apenas pelo número de ip gerado pelo docker. Para que seja possível definirmos hostnames para os containers, precisamos criar nossa própria rede, ex: em vez de termos "172.17.0.2", podemos ter essa referência como banco-mysql, api, nginx, etc. 
+
+* Comando para criar uma rede:
+- docker network create --driver bridge minha-rede (o driver no é a forma de rede utilizada, a mais comum é a bridge)
+
+* Listar as redes:
+- docker network ls
+
+* Criando um container e vinculando o mesmo a uma rede definida por nós:
+- docker run -it --name meu-container-de-ubuntu --network minha-rede ubuntu  (com o parâmetro --network, definimos de qual rede o container fará parte)
 -----------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
+* Rede Docker:
+
+- Por padrão, os containers ficam na mesma rede com o nome bridge. Porém, a comunicação deve ser feita através de IP.
+- Na rede padrão do Docker, só podemos realizar a comunicação utilizando IPs. Se criarmos nossa própria rede podemos usar seu nome no lugar do IP.
+- Com docker inspect ID_DO_CONTAINER podemos verificar a qual rede ele pertence. Comando inspect mostra vários detalhes sobre o container, entre eles o network. Nesse item, aparece o nome da nossa rede, IP do container, o gateway e entre outras informações.
+

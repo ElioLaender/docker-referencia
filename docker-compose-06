@@ -1,0 +1,173 @@
+
+
+* Docker Compose:
+
+- É uma ferramenta onde a partir de um arquivo de configuração .yml, conseguimos configurar a execução para toda a infra necessária para executar uma aplicação. 
+
+* Criando um docker-compose.yml
+
+PS: Arquivos .yml, são parecidos com json, porém ao inves de usar chaves, a hierarquia é feita através de tabs. 
+Os '-' são considerados como uma "posição de array"
+- Na raiz do projeto, criar o arquivo docker-compose.yml com o seguinte conteúdo:
+
+// docker-compose.yml
+version: '3' (versão do docker compose que está sendo utilizada, deve ser a primeira instrução)
+services:   (são as partes da aplicação, tais como nginx, node, mongo, etc)
+  nginx: (infoma o uso do nginx como um serviço)
+    build: (informa que deve buildado)
+      dockerfile: ./docker/nginx.dockerfile 
+      context: . (deverá ser informado a partir do diretório onde está o docker-compose o dockerfile da imagem do nginx)
+    image: laendersoftware/nginx (Informa qual o nome da imagem)
+    container_name: nginx (será criardo um container a partir desta imagem)
+    ports:
+      - "80:80" (informa que a porta 80 do host vai apontar para a 80 do host)
+      - "443:443" (informa a porta https)
+    networks: 
+      - production-network (informa de qual network o container fará parte)
+    depends_on:
+      - "node1"
+      - "node2"
+      - "node3"
+  mongodb:
+    image: mongo (neste caso, o build não foi especificado pois será utilizado uma imagem já previamente disponibilizada no dockerhub)
+    networks:
+      - production-network (Nao foi especificado nenhuma porta, pois a comunicação será feita pelo hostname "nome do container")
+
+  node1:
+    build:
+      dockerfile: ./docker/alura-books.dockerfile
+      context: .
+    image: laendersoftware/cognisys
+    container_name: cognisys1
+    ports: 
+      - "3000"
+    networks: 
+      - production-network
+    depends_on:
+      - "mongodb" (informamos que esse container deverá ser criado apenas após a criação do container mongodb)
+
+  node2:
+    build:
+      dockerfile: ./docker/alura-books.dockerfile
+      context: .
+    image: laendersoftware/cognisys
+    container_name: cognisys2
+    ports: 
+      - "3000"
+    networks: 
+      - production-network
+    depends_on:
+      - "mongodb" (informamos que esse container deverá ser criado apenas após a criação do container mongodb)
+
+  node3:
+    build:
+      dockerfile: ./docker/alura-books.dockerfile
+      context: .
+    image: laendersoftware/cognisys
+    container_name: cognisys3
+    ports: 
+      - "3000"
+    networks: 
+      - production-network
+    depends_on:
+      - "mongodb" (informamos que esse container deverá ser criado apenas após a criação do container mongodb)
+      
+networks: (informa qual a rede será criada para levantar a infra)
+  production-network:
+    driver: bridge
+
+
+
+-----------------------------------------------------------------------------
+* Responsabilidades do Docker Compose
+
+- Executar o build de vários containers.
+- Desligar os containers de maneira coordenada.
+- Criar nova rede em qual os containers podem participar. O docker compose cria uma rede padrão. Também é possível criar uma nova rede usando o comando docker network.
+-----------------------------------------------------------------------------
+* Instalando o Docker Compose no Linux
+
+- O Docker Compose não vem instalado por padrão na instalação do docker no linux. 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+- Após a instalação, é necessário dar permissão para a aplicação
+sudo chmod +x /usr/local/bin/docker-compose
+
+- Verificar a versão do node
+docker-compose --version
+
+-----------------------------------------------------------------------------
+* Buildando as imagens a partir do arquivo .yml com o dockercompose:
+
+- Já no diretório onde se encontra o arquivo, digite: 
+ docker-compose build (Será verificado quais as imagens deverão ser buildadas)
+ 
+- Após criado as imagens, para criar os containers, basta rodar:
+ docker-compose up -d (a flag -d é para liberar o terminal)
+ 
+ 
+* Listar o serviços rodando que foram criados a partir do docker-compose
+ docker-compose ps
+ 
+* Pausa e remove todos os serviços rodando criados a partir do docker-compose
+ docker-compose down
+ 
+* Reinicia todos containers criados a partir do docker-compose
+ docker-compose restart
+
+-----------------------------------------------------------------------------
+* Docker Cheat Sheet - Os Comandos Utilizados
+
+Segue a lista com os principais comandos utilizados durante o curso:
+
+* Comandos relacionados às informações
+docker version - exibe a versão do docker que está instalada.
+docker inspect ID_CONTAINER - retorna diversas informações sobre o container.
+docker ps - exibe todos os containers em execução no momento.
+docker ps -a - exibe todos os containers, independentemente de estarem em execução ou não.
+* Comandos relacionados à execução
+docker run NOME_DA_IMAGEM - cria um container com a respectiva imagem passada como parâmetro.
+docker run -it NOME_DA_IMAGEM - conecta o terminal que estamos utilizando com o do container.
+docker run -d -P --name NOME dockersamples/static-site - ao executar, dá um nome ao container e define uma porta aleatória.
+docker run -d -p 12345:80 dockersamples/static-site - define uma porta específica para ser atribuída à porta 80 do container, neste caso 12345.
+docker run -v "CAMINHO_VOLUME" NOME_DA_IMAGEM - cria um volume no respectivo caminho do container.
+docker run -it --name NOME_CONTAINER --network NOME_DA_REDE NOME_IMAGEM - cria um container especificando seu nome e qual rede deverá ser usada.
+* Comandos relacionados à inicialização/interrupção
+docker start ID_CONTAINER - inicia o container com id em questão.
+docker start -a -i ID_CONTAINER - inicia o container com id em questão e integra os terminais, além de permitir interação entre ambos.
+docker stop ID_CONTAINER - interrompe o container com id em questão.
+Comandos relacionados à remoção
+docker rm ID_CONTAINER - remove o container com id em questão.
+docker container prune - remove todos os containers que estão parados.
+docker rmi NOME_DA_IMAGEM - remove a imagem passada como parâmetro.
+* Comandos relacionados à construção de Dockerfile
+docker build -f Dockerfile - cria uma imagem a partir de um Dockerfile.
+docker build -f Dockerfile -t NOME_USUARIO/NOME_IMAGEM - constrói e nomeia uma imagem não-oficial.
+docker build -f Dockerfile -t NOME_USUARIO/NOME_IMAGEM CAMINHO_DOCKERFILE - constrói e nomeia uma imagem não-oficial informando o caminho para o Dockerfile.
+* Comandos relacionados ao Docker Hub
+docker login - inicia o processo de login no Docker Hub.
+docker push NOME_USUARIO/NOME_IMAGEM - envia a imagem criada para o Docker Hub.
+docker pull NOME_USUARIO/NOME_IMAGEM - baixa a imagem desejada do Docker Hub.
+
+* Comandos relacionados à rede
+hostname -i - mostra o ip atribuído ao container pelo docker (funciona apenas dentro do container).
+docker network create --driver bridge NOME_DA_REDE - cria uma rede especificando o driver desejado.
+
+* Comandos relacionados ao docker-compose
+
+docker-compose build - Realiza o build dos serviços relacionados ao arquivo docker-compose.yml, assim como verifica a sua sintaxe.
+docker-compose up - Sobe todos os containers relacionados ao docker-compose, desde que o build já tenha sido executado.
+docker-compose down - Para todos os serviços em execução que estejam relacionados ao arquivo docker-compose.yml.
+
+-----------------------------------------------------------------------------
+* Exemplo de um dockerfile responsável por gerar uma imagem do nginx:
+
+FROM nginx:latest
+MAINTAINER LSoftware
+COPY /public /var/www/public
+COPY /docker/config/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80 443 (portas abertas)
+ENTRYPOINT ["nginx"] (roda o nginx)
+CMD ["-g", "daemon off;"] (parametros a serem executados)
+-----------------------------------------------------------------------------
