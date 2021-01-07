@@ -1,11 +1,43 @@
 * DockerFile
 
+- Quando temos um requisito específico para rodar nossos projetos, podemos criar um arquivo de base para montar nossas imagens, esse arquivo é chamado de dockerfiles. Ps: o arquivo pode chamar também nome_qualquer.dockerfile que funciona normalmente. 
+
+Geralmente uma imagem é criarda a partir de uma outra imagem base, nesse caso, especificamos a imagem base a partir do "FROM" nome da imagem. 
+
+Ex conteúdo arquivo dockerfile
+
+FROM node:latest       (Informa a imagem base Caso não seja especificado a versão após o :, será pego a versão mais recente.) 
+MAINTAINER LaenderSoftware (Informa o responsável por manter a imagem)
+ENV NODE_ENV=production (Variáve de ambiente setada no container)
+ENV PORT=3000
+COPY . /var/www (Copia o conteúdo especificado para dentro da imagem, o '.', pega todo o conteúdo da pasta onde se encontra o dockerfile e copia para a pasta www do container)
+WORKDIR /var/www (Informa em qual diretório o container irá abrir ao ser carregado)
+RUN npm install (comando executado quando o container for criado)
+ENTRYPOINT npm start (Executa comando quando o container estiver totalmente gerado PS: os comandos também podem ser declarados dessa forma ENTRYPOINT ["npm", "install"])
+EXPOSE $PORT (Informa que o container deverá utilizar a porta 3000)
+
 -----------------------------------------------------------------------------
+* Buildar um arquivo dockerfile para ser convertido em imagem:
+
+- Ao criar um arquivo de configuração, evemos buildar o mesmo para se tornar uma imagem disponível no dockerhost. 
+
+Ex: docker build -f cognisys_api.dockerfile -t laendersoftware/springboot . (a flag -f é para passarmos o nome do arquivo, caso o arquivo se chame Dockerfile, não precisa especificar a flag -f, o '.', é necessário apra informar o diretório onde se encontra o arquivo a ser buildado)
 -----------------------------------------------------------------------------
+* Criar container da imagem construída:
+
+- docker run -d -p 8080:3000 laendersoftware/node
 -----------------------------------------------------------------------------
+* Docker Hub:
+
+- O Docker Hub é um repositório de imagens, que também permite que possamos subir nossas imagens para compartilhar com terceiros. 
+
+* Logar via terminal no Docker Hub:
+- docker login
+
+* Fazer upload da nossa imagem para o Docker Hub:
+- docker push laendersoftware/node (o comando é o docker push nome da imagem)
+
+* Baixar a imagem a  partir do docker hub
+- docker pull laendersoftware/node (NOME_USUARIO/NOME_IMAGEM)
 -----------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
+

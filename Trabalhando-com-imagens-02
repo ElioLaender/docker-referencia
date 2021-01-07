@@ -43,6 +43,7 @@ Ex: docker run -it ubuntu (o -it, é responsável por criar uma iteratividade do
 * Remoção de containers:
 
 - docker rm id_container
+- docker rm -f id_container (para o container caso esteja em execução e o remove logo em seguida)
 - docker container prune (remove todos os containers parados)
 -----------------------------------------------------------------------------
 * Exibir imagens baixadas
@@ -60,8 +61,6 @@ e só irá trazer do repositório o que não tiver previamente baixado. No nosso
 
 Algumas vantagens:
 - Possibilidade de poupar banda de transferência. 
-
-
 
 * As camadas das imagens são readyOnly, sendo assim, quando criamos um container, é criado uma nova camada acima da imagem principal, e nessa camada é possível ler/escrever na camadas utilizadas. Ou seja, um container é uma camada utilizada a partir da imagem base, sendo as camadas base "replicadas" de forma a ser possível ler/escrever nessa camada. 
 
@@ -84,7 +83,9 @@ docker run dockersamples/static-site ('dockersamples' se refere ao criador da im
 
 - Por padrão, ao executar o docker stop, existe um prazo de espera de 10 segundos. Para evitar ter que esperar por este prazo, é possível rodar o comando com a seguint flag:
 
-docker stop -t 0 id_contaier (-t é do time e o prazo é 0 intantâneo)
+- docker stop -t 0 id_contaier (-t é do time e o prazo é 0 intantâneo)
+
+
 -----------------------------------------------------------------------------
 * Linkando portas do container com as da máquina que está rodando o Docker:
 
