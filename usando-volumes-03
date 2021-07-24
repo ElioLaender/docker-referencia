@@ -15,7 +15,6 @@
 * Criando um container, especificando onde o volume será salvo na máquina que está rodando os containers
 - docker run -it -v "/home/laender/Documents/docker-volumes:/var/www" ubuntu (na flag -v, especificar a pasta da máquina e após o : especificar a pasta do container)
 
-
 ** Dúvida: Quando especificarmos uma pasta específica para que os dados sejam salvos, também é considerado volume?
 
 ** Docker Host é a máquina que roda o docker

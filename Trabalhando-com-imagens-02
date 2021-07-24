@@ -77,7 +77,7 @@ a chamada é um pouco diferente, ex:
 
 docker run dockersamples/static-site ('dockersamples' se refere ao criador da imagem). PS: Ao criar o container dessa forma, o servidor irá bloquear o terminal, para tanto, podemos sair do terminal, parar o container e rodar o mesmo novamente utilizando a tag -d de detached, exemplo.
 
-- docker run -s dockersamples/static-site (Dessa forma o container será criado liberando o terminal)
+- docker run -d dockersamples/static-site (Dessa forma o container será criado liberando o terminal)
 -----------------------------------------------------------------------------
 * Docker stop:
 
